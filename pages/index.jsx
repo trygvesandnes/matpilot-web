@@ -804,8 +804,8 @@ async function lagreEanCache(){
 // Søk opp EAN for én vare via proxyen
 async function sokEan(vare){
   try{
-    const sokeord = encodeURIComponent(`${vare.navn.split(" ").slice(0,3).join(" ")}`);
-    const r = await fetch(`${PROXY_URL}/api/products?search=${sokeord}&size=5&unique=true`);
+    const sokeord = encodeURIComponent(${vare.navn.split(" ").slice(0,3).join(" ")});
+    const r = await fetch(${PROXY_URL}/api/products?search=${sokeord}&size=5&unique=true);
     if(!r.ok) return null;
     const d = await r.json();
     // Finn beste treff: produkt der navn eller produsent matcher
@@ -824,7 +824,7 @@ async function sokEan(vare){
 async function hentEktePriser(eans){
   if(!eans.length) return {};
   try{
-    const r = await fetch(`${PROXY_URL}/api/prices-bulk`, {
+    const r = await fetch(${PROXY_URL}/api/prices-bulk, {
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body: JSON.stringify({eans})
@@ -839,7 +839,7 @@ async function hentEktePriser(eans){
 async function lastEkteButikker(){
   try{
     // Hent første side for å finne totalt antall sider
-    const r1 = await fetch(`${PROXY_URL}/api/stores?size=100&page=1`);
+    const r1 = await fetch(${PROXY_URL}/api/stores?size=100&page=1);
     if(!r1.ok) throw new Error("HTTP "+r1.status);
     const d1 = await r1.json();
     const sisteSide = Math.min(d1.meta?.last_page || 1, 60);
@@ -850,7 +850,7 @@ async function lastEkteButikker(){
       const slutt = Math.min(start+9, sisteSide);
       const sider = Array.from({length:slutt-start+1},(_,i)=>start+i);
       const res = await Promise.allSettled(
-        sider.map(s=>fetch(`${PROXY_URL}/api/stores?size=100&page=${s}`).then(r=>r.ok?r.json():null))
+        sider.map(s=>fetch(${PROXY_URL}/api/stores?size=100&page=${s}).then(r=>r.ok?r.json():null))
       );
       for(const r of res){
         if(r.status==="fulfilled" && r.value?.butikker) alle.push(...r.value.butikker);
@@ -1148,14 +1148,14 @@ function Onboarding({onFerdig}){
           const {butikker:b,tid}=JSON.parse(cache.value);
           if(Date.now()-tid<24*3600000 && b.length>100){ setEkteOnboardingButikker(b); return; }
         }
-        const r1=await fetch(`${PROXY_URL}/api/stores?size=100&page=1`);
+        const r1=await fetch(${PROXY_URL}/api/stores?size=100&page=1);
         if(!r1.ok) return;
         const d1=await r1.json();
         const alle=[...(d1.butikker||[])];
         const sisteSide=Math.min(d1.meta?.last_page||1,60);
         for(let start=2;start<=sisteSide;start+=10){
           const slutt=Math.min(start+9,sisteSide);
-          const res=await Promise.allSettled(Array.from({length:slutt-start+1},(_,i)=>start+i).map(s=>fetch(`${PROXY_URL}/api/stores?size=100&page=${s}`).then(r=>r.ok?r.json():null)));
+          const res=await Promise.allSettled(Array.from({length:slutt-start+1},(_,i)=>start+i).map(s=>fetch(${PROXY_URL}/api/stores?size=100&page=${s}).then(r=>r.ok?r.json():null)));
           for(const r of res) if(r.status==="fulfilled"&&r.value?.butikker) alle.push(...r.value.butikker);
         }
         if(alle.length){
@@ -1399,7 +1399,7 @@ function ProduktKort({vare, butikkIds, pv, paaTilbud, favoritt, onAapne, onLeggT
           <div style={{fontSize:14.5,fontWeight:700,color:C.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",flex:1}}>{vare.navn}</div>
           {anbefalt && (
             <span
-              onClick={(e)=>{e.stopPropagation(); alert(`⭐ Anbefalt\n\nDette produktet har score ${score?.toFixed(1)}/10 basert på:\n• Lite bearbeidet (NOVA ${vare.nova ?? "–"})\n• Proteininnhold${vare.m?.protein!=null?" ("+vare.m.protein+"g)":""}\n• Pris i forhold til lignende produkter\n\nScore over 7,5 gir Anbefalt-merket.`);}}
+              onClick={(e)=>{e.stopPropagation(); alert(⭐ Anbefalt\n\nDette produktet har score ${score?.toFixed(1)}/10 basert på:\n• Lite bearbeidet (NOVA ${vare.nova ?? "–"})\n• Proteininnhold${vare.m?.protein!=null?" ("+vare.m.protein+"g)":""}\n• Pris i forhold til lignende produkter\n\nScore over 7,5 gir Anbefalt-merket.);}}
               style={{background:C.ok,color:"#fff",borderRadius:6,fontSize:10,fontWeight:800,padding:"1px 6px",flexShrink:0,cursor:"pointer"}}
             >★ Anbefalt ℹ️</span>
           )}
@@ -1680,7 +1680,7 @@ function HjemSide({bruker, butikkIds, kurv, favoritter, lister, pv, premium, onA
   useEffect(()=>{
     (async()=>{
       try{
-        const r = await fetch(`${PROXY_URL}/api/prisfall?size=20`);
+        const r = await fetch(${PROXY_URL}/api/prisfall?size=20);
         if(!r.ok) return;
         const d = await r.json();
         if(d.prisfall?.length) setEktePrisfall(d.prisfall);
@@ -1717,7 +1717,7 @@ function HjemSide({bruker, butikkIds, kurv, favoritter, lister, pv, premium, onA
   const time = new Date().getHours();
   const hilsen = time < 10 ? "God morgen" : time < 12 ? "God formiddag" : time < 17 ? "Hei" : time < 21 ? "God kveld" : "Hei";
   const undertittel = antallIKurv > 0
-    ? `Du har ${antallIKurv} vare${antallIKurv!==1?"r":""} i handlekurven 🛒`
+    ? Du har ${antallIKurv} vare${antallIKurv!==1?"r":""} i handlekurven 🛒
     : besteKjop.length > 0
     ? "Det er gode tilbud i dine butikker i dag!"
     : "Klar til å handle smart?";
@@ -1951,7 +1951,7 @@ function ProdukterSide({butikkIds, favoritter, pv, premium, onAapne, onLeggTil, 
     if(sok.trim()){
       const q = sok.trim().toLowerCase();
       // Synonymer og delvise treff
-      const synonymer = {"cottage":["cottage cheese","hytteost"],"hytteost":["cottage cheese","cottage"],"melk":["melk","drikk"],"filet":["filet","filét"]};
+      const synonymer = {"cottage"🙁"cottage cheese","hytteost"],"hytteost"🙁"cottage cheese","cottage"],"melk"🙁"melk","drikk"],"filet"🙁"filet","filét"]};
       const ekstra = Object.entries(synonymer).filter(([k])=>q.includes(k)).flatMap(([,v])=>v);
       const alle = [q,...ekstra];
       v = v.filter(x=>alle.some(s=>x.navn.toLowerCase().includes(s)||x.prod.toLowerCase().includes(s)));
@@ -2586,14 +2586,14 @@ function ListeDetalj({liste, butikkIds, onTilbake, onEndreNavn, onSlett, onFjern
       const best = bestePris(v.id,butikkIds);
       const butikkNavn = best ? (SEED_BUTIKKER.find(b=>b.id===best.butikkId)?.navn||"Ukjent") : "Ingen pris";
       if(!perButikk[butikkNavn]) perButikk[butikkNavn]=[];
-      perButikk[butikkNavn].push(`• ${v.navn}${best?` – ${best.pris.toFixed(2).replace(".",",")} kr`:""}`);
+      perButikk[butikkNavn].push(• ${v.navn}${best? – ${best.pris.toFixed(2).replace(".",",")} kr`:""}`);
     });
     Object.entries(perButikk).forEach(([butikk,varer])=>{
-      linjer.push(`\n🏪 ${butikk}`);
+      linjer.push\n🏪 ${butikk}`);
       varer.forEach(v=>linjer.push(v));
     });
-    linjer.push(`\nTotalt: ca. ${total.toFixed(0)} kr`);
-    linjer.push(`\nLaget med Matpilot`);
+    linjer.push(\nTotalt: ca. ${total.toFixed(0)} kr);
+    linjer.push(\nLaget med Matpilot);
     const tekst = linjer.join("\n");
     if(navigator.share){ navigator.share({title:liste.navn,text:tekst}).catch(()=>{}); }
     else if(navigator.clipboard){ navigator.clipboard.writeText(tekst).then(()=>alert("Kopiert til utklippstavlen!")); }
@@ -2748,7 +2748,7 @@ function KontoSide({onTilbake, onLoggInn, onRegistrer, onNyttPassord, finnesEpos
         if(!finnesEpost(epost.trim().toLowerCase())) return setFeil("Fant ingen konto med denne e-postadressen.");
         const k = String(100000 + (hash(epost.trim().toLowerCase())%900000));
         setRiktigKode(k);
-        setInfo(`Demoversjon: tilbakestillingskoden din er ${k}. I en lansert app sendes denne på e-post.`);
+        setInfo(Demoversjon: tilbakestillingskoden din er ${k}. I en lansert app sendes denne på e-post.);
         setGlemtSteg(1);
       } else {
         if(kode!==riktigKode) return setFeil("Koden stemmer ikke. Sjekk og prøv igjen.");
@@ -2855,7 +2855,7 @@ function RapporterPrisModal({vare, butikkIds, onSend, onLukk}){
 
         <div style={{fontSize:12.5,fontWeight:700,color:C.sub,marginBottom:5}}>Bildebevis (valgfritt, +15 XP ekstra)</div>
         <label style={{...sKnappSek,display:"block",textAlign:"center",marginBottom:12,boxSizing:"border-box"}}>
-          {bildeNavn ? `✓ ${bildeNavn}` : "Legg ved bilde av hylleprisen"}
+          {bildeNavn ? ✓ ${bildeNavn} : "Legg ved bilde av hylleprisen"}
           <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>setBildeNavn(e.target.files?.[0]?.name||null)}/>
         </label>
         <p style={{fontSize:12,color:C.sub,margin:"0 0 14px",lineHeight:1.5}}>Tidspunktet registreres automatisk. Nye priser merkes som estimerte til de bekreftes. I demoversjonen lagres ikke selve bildet.</p>
@@ -3138,7 +3138,7 @@ function PremiumSide({premium, rabattKlar, spiller, onKjop, onSiOpp, onTilbake})
                 </div>
                 <div style={{fontSize:12.5,color:C.sub}}>
                   {premium.status==="gratis"
-                    ? `Gratis til ${dagTekst(premium.sluttdato)}`
+                    ? Gratis til ${dagTekst(premium.sluttdato)}
                     : `Fornyes ${dagTekst(premium.fornyes)} · ${premium.pris} kr/mnd`}
                 </div>
               </div>
@@ -3229,19 +3229,19 @@ function BelonningerSide({spiller, belonningStatus, premium, onAktiverRabatt, on
     const laast = !st;
     let statusTekst, handling=null;
     if(laast){
-      statusTekst = `Låses opp på nivå ${b.level} (du er på nivå ${nivaa})`;
+      statusTekst = Låses opp på nivå ${b.level} (du er på nivå ${nivaa});
     } else if(b.type==="badge"){
-      statusTekst = `Mottatt ${dagTekst(st.laastOpp)} – vises på profilen din`;
+      statusTekst = Mottatt ${dagTekst(st.laastOpp)} – vises på profilen din;
     } else if(b.type==="rabatt"){
-      if(st.brukt) statusTekst = `Brukt ${dagTekst(st.brukt)}`;
+      if(st.brukt) statusTekst = Brukt ${dagTekst(st.brukt)};
       else if(st.aktivert) statusTekst = "Aktivert – brukes automatisk på neste Premium-betaling";
-      else { statusTekst = `Låst opp ${dagTekst(st.laastOpp)}`; handling = <button style={{...sKnapp,marginTop:10}} onClick={onAktiverRabatt}>Aktiver rabatten</button>; }
+      else { statusTekst = Låst opp ${dagTekst(st.laastOpp)}; handling = <button style={{...sKnapp,marginTop:10}} onClick={onAktiverRabatt}>Aktiver rabatten</button>; }
     } else if(b.type==="premium1m"){
       const frist = st.laastOpp + 30*DAG;
-      if(st.aktivert) statusTekst = `Aktivert ${dagTekst(st.aktivert)}`;
-      else if(naa()>frist) statusTekst = `Utløp ${dagTekst(frist)} – ble ikke aktivert innen 30 dager`;
+      if(st.aktivert) statusTekst = Aktivert ${dagTekst(st.aktivert)};
+      else if(naa()>frist) statusTekst = Utløp ${dagTekst(frist)} – ble ikke aktivert innen 30 dager;
       else {
-        statusTekst = `Må aktiveres innen ${dagTekst(frist)}`;
+        statusTekst = Må aktiveres innen ${dagTekst(frist)};
         handling = (
           <div style={{marginTop:10}}>
             <div style={{background:C.blueLys,borderRadius:10,padding:"10px 12px",marginBottom:10}}>
@@ -3337,7 +3337,7 @@ function ForeslaaProduktSide({butikkIds, onSend, onTilbake}){
         <Felt label="Kommentar" verdi={f.kommentar} onEndre={s("kommentar")} plassholder="valgfritt"/>
         <div style={{fontSize:12.5,fontWeight:700,color:C.sub,marginBottom:5}}>Produktbilde (valgfritt)</div>
         <label style={{...sKnappSek,display:"block",textAlign:"center",marginBottom:16,boxSizing:"border-box"}}>
-          {f.bilde ? `✓ ${f.bilde}` : "Legg ved bilde"}
+          {f.bilde ? ✓ ${f.bilde} : "Legg ved bilde"}
           <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>s("bilde")(e.target.files?.[0]?.name||null)}/>
         </label>
         <button style={{...sKnapp,opacity:f.navn.trim()?1:0.4}} disabled={!f.navn.trim()} onClick={()=>onSend(f)}>Send til godkjenning</button>
@@ -3370,7 +3370,7 @@ function ForeslaaButikkSide({onSend, onTilbake}){
         <Felt label="Kommentar" verdi={f.kommentar} onEndre={s("kommentar")} plassholder="valgfritt"/>
         <div style={{fontSize:12.5,fontWeight:700,color:C.sub,marginBottom:5}}>Bilde (valgfritt)</div>
         <label style={{...sKnappSek,display:"block",textAlign:"center",marginBottom:12,boxSizing:"border-box"}}>
-          {f.bilde ? `✓ ${f.bilde}` : "Legg ved bilde"}
+          {f.bilde ? ✓ ${f.bilde} : "Legg ved bilde"}
           <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>s("bilde")(e.target.files?.[0]?.name||null)}/>
         </label>
         {dup.length>0 && (
@@ -3446,7 +3446,7 @@ function SupportSide({saker, onNySak, onAapneSak, onTilbake}){
             <div style={{fontSize:12.5,fontWeight:700,color:C.sub,marginBottom:5}}>Melding</div>
             <textarea value={tekst} onChange={e=>setTekst(e.target.value)} rows={4} style={{...sInput,resize:"vertical",marginBottom:12,fontFamily:FONT}} placeholder="Beskriv hva det gjelder …"/>
             <label style={{...sKnappSek,display:"block",textAlign:"center",marginBottom:12,boxSizing:"border-box"}}>
-              {vedlegg ? `✓ ${vedlegg}` : "Legg ved skjermbilde (valgfritt)"}
+              {vedlegg ? ✓ ${vedlegg} : "Legg ved skjermbilde (valgfritt)"}
               <input type="file" accept="image/*" style={{display:"none"}} onChange={e=>setVedlegg(e.target.files?.[0]?.name||null)}/>
             </label>
             <button style={{...sKnapp,opacity:tekst.trim()?1:0.4}} disabled={!tekst.trim()} onClick={()=>{onNySak({kategori,tekst:tekst.trim(),vedlegg});setNySak(false);setTekst("");setVedlegg(null);}}>Opprett sak</button>
@@ -4087,8 +4087,8 @@ function AdminRefusjonSide({brukere, premium, betalinger, refusjoner, onUtfor, o
   const [belop,setBelop] = useState("");
   const [grunn,setGrunn] = useState("");
   const treff = sok.trim() ? brukere.filter(b=>b.navn.toLowerCase().includes(sok.toLowerCase())||b.epost.toLowerCase().includes(sok.toLowerCase())) : brukere;
-  const premiumTekst = premium.status==="betalt" ? `Betalt · ${premium.pris} kr/mnd · fornyes ${dagTekst(premium.fornyes)}`
-    : premium.status==="gratis" ? `Gratisperiode til ${dagTekst(premium.sluttdato)}` : "Ikke aktivt abonnement";
+  const premiumTekst = premium.status==="betalt" ? Betalt · ${premium.pris} kr/mnd · fornyes ${dagTekst(premium.fornyes)}
+    : premium.status==="gratis" ? Gratisperiode til ${dagTekst(premium.sluttdato)} : "Ikke aktivt abonnement";
   const utfor = (type)=>{
     const b = type==="refusjon" ? parseFloat(String(belop).replace(",",".")) : 0;
     if(type==="refusjon" && (isNaN(b)||b<=0)) return;
@@ -4262,7 +4262,7 @@ function ProfilSide({bruker, butikkIds, favoritter, lister, spiller, belonningSt
       <div style={{display:"grid",gridTemplateColumns:"1fr 1fr",gap:10,marginBottom:14}}>
         <div style={{...sCard,padding:14,textAlign:"center"}}>
           <div style={{fontSize:22,fontWeight:800,color:estimertSpart>0?C.ok:C.sub,lineHeight:1,marginBottom:2}}>
-            {estimertSpart>0 ? `~${estimertSpart} kr` : "–"}
+            {estimertSpart>0 ? ~${estimertSpart} kr : "–"}
           </div>
           <div style={{fontSize:11.5,color:C.sub,fontWeight:600}}>Estimert spart</div>
         </div>
@@ -4354,7 +4354,7 @@ function ProfilSide({bruker, butikkIds, favoritter, lister, spiller, belonningSt
 /* ════ HOVEDAPP ════ */
 const LAGRINGSNOKKEL = "matpilot-v1";
 
-export default function App(){
+function App(){
   const [fase,setFase] = useState("laster"); // laster | onboarding | app
   const [butikkIds,setButikkIds] = useState([]);
   const [tab,setTab] = useState("hjem");
@@ -4495,21 +4495,21 @@ export default function App(){
   const opprettListe = (navn, medVareId)=>{
     setLister(p=>[...p,{id:uid(),navn,varer:medVareId?[medVareId]:[],opprettet:Date.now()}]);
     setNyListe(null); setListeVelger(null);
-    visToast(`Listen «${navn}» er opprettet`);
+    visToast(Listen «${navn}» er opprettet);
   };
   const leggVareIListe = (listeId, vareId)=>{
     const l = lister.find(x=>x.id===listeId);
     if(l && l.varer.includes(vareId)){ setListeVelger(null); visToast("Varen ligger allerede i listen"); return; }
     setLister(p=>p.map(x=>x.id===listeId?{...x,varer:[...x.varer,vareId]}:x));
     setListeVelger(null);
-    visToast(`Lagt til i «${l?l.navn:"listen"}»`);
+    visToast(Lagt til i «${l?l.navn:"listen"}»);
   };
   const endreListeNavn = (id,navn)=>{ setLister(p=>p.map(l=>l.id===id?{...l,navn}:l)); visToast("Navnet er lagret"); };
   const slettListe = (id)=>{ setLister(p=>p.filter(l=>l.id!==id)); setSide({navn:"lister"}); visToast("Listen er slettet"); };
   const fjernFraListe = (listeId,vareId)=>setLister(p=>p.map(l=>l.id===listeId?{...l,varer:l.varer.filter(v=>v!==vareId)}:l));
   const listeIKurv = (liste)=>{
     setKurv(p=>{ const k={...p}; liste.varer.forEach(id=>{k[id]=(k[id]||0)+1;}); return k; });
-    visToast(`${liste.varer.length} varer lagt i handlekurven`);
+    visToast(${liste.varer.length} varer lagt i handlekurven);
   };
 
   /* — Konto (simulert) — */
@@ -4517,7 +4517,7 @@ export default function App(){
     const b = brukere.find(x=>x.epost===epost);
     if(!b || b.passord!==passord) return "Feil e-post eller passord. Prøv igjen, eller bruk «Glemt passordet?».";
     setAktivBrukerId(b.id); setSide(null);
-    visToast(`Velkommen tilbake, ${b.navn.split(" ")[0]}!`);
+    visToast(Velkommen tilbake, ${b.navn.split(" ")[0]}!);
     return null;
   };
   const registrer = (navn,epost,passord)=>{
@@ -4551,9 +4551,9 @@ export default function App(){
       const nye = BELONNINGER.filter(b=>b.level>forNivaa && b.level<=nyNivaa);
       if(nye.length){
         setBelonningStatus(s=>{ const k={...s}; nye.forEach(b=>{ if(!k[b.id]) k[b.id]={laastOpp:naa()}; }); return k; });
-        nye.forEach(b=>leggVarsel(`Belønning låst opp: ${b.tittel}`, b.type==="premium1m"?"Aktiver den innen 30 dager under Profil → Belønninger.":"Se Profil → Belønninger.", "laast-opp-"+b.id));
+        nye.forEach(b=>leggVarsel(Belønning låst opp: ${b.tittel}, b.type==="premium1m"?"Aktiver den innen 30 dager under Profil → Belønninger.":"Se Profil → Belønninger.", "laast-opp-"+b.id));
       }
-      visToast(`🎉 Du nådde nivå ${nyNivaa}!`);
+      visToast🎉 Du nådde nivå ${nyNivaa}!`);
     }
   };
 
@@ -4568,7 +4568,7 @@ export default function App(){
     if(avvik<=0.10) endreTillit(+2); else if(avvik>0.30) endreTillit(-3);
     setRapporterVare(null);
     visToast(hoyTillit?"Pris registrert som verifisert (høy tillit)":"Pris registrert – venter på bekreftelse");
-    giXp(bilde?25:10, `Prisrapport${bilde?" med bildebevis":""}: ${vare.navn}`);
+    giXp(bilde?25:10, Prisrapport${bilde?" med bildebevis":""}: ${vare.navn});
   };
   const bekreftPris = (vare,butikkId)=>{
     setBekreftelser(p=>[...p,{vareId:vare.id,butikkId,tid:naa()}]);
@@ -4786,7 +4786,7 @@ export default function App(){
   } else if(side?.navn==="favoritter"){
     innhold = <FavoritterSide favoritter={favoritter} butikkIds={butikkIds} pv={pv} onTilbake={()=>setSide(null)}
       onAapne={setAapenVare} onLeggTil={leggIKurv} onFavoritt={toggleFavoritt}
-      onLeggAlleIKurv={(ids)=>{ ids.forEach(id=>leggIKurv(id)); visToast(`${ids.length} favoritter lagt i handlekurven`); }}/>;
+      onLeggAlleIKurv={(ids)=>{ ids.forEach(id=>leggIKurv(id)); visToast(${ids.length} favoritter lagt i handlekurven); }}/>;
   } else if(side?.navn==="bidrag"){
     innhold = <BidragSide spiller={spiller} rapporter={rapporter} bekreftelser={bekreftelser} onTilbake={()=>setSide(null)}/>;
   } else if(side?.navn==="belonninger"){
